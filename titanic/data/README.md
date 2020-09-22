@@ -1,16 +1,16 @@
-Data Dictionary
+Data Dictionary ====> variable = feature = parameter = axis
+Variable Definition Key 0. survival Survival 0 = No, 1 = Yes
 
-Variable Definition Key
-survival Survival 0 = No, 1 = Yes
-pclass Ticket class 1 = 1st, 2 = 2nd, 3 = 3rd
-sex Sex
-Age Age in years
-sibsp # of siblings / spouses aboard the Titanic
-parch # of parents / children aboard the Titanic
-ticket Ticket number
-fare Passenger fare
-cabin Cabin number
-embarked Port of Embarkation C = Cherbourg, Q = Queenstown, S = Southampton
+1. pclass Ticket class 1 = 1st, 2 = 2nd, 3 = 3rd
+2. sex Sex
+3. Age Age in years
+4. sibsp # of siblings / spouses aboard the Titanic
+5. parch # of parents / children aboard the Titanic
+6. ticket Ticket number
+7. fare Passenger fare
+8. cabin Cabin number
+9. embarked Port of Embarkation C = Cherbourg, Q = Queenstown, S = Southampton
+
 Variable Notes
 
 pclass: A proxy for socio-economic status (SES)

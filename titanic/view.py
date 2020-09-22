@@ -1,3 +1,3 @@
-class Controller:
+class View:
     def __init__(self):
         pass

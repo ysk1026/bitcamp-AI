@@ -1,4 +1,4 @@
-from entity import Entity
+from titanic.entity import Entity
 import pandas as pd
 import numpy as np
 
@@ -26,16 +26,19 @@ class Service:
         this = self.entity
         this.context = './data'
         this.fname = payload
-        return pd.read.csv(this.context + this.fname)
+        return pd.read.csv(this.context + this.fname)  # p.139 df = tensor
 
     @staticmethod
-    def create_train(this):
+    def create_train(this) -> object:
         return this.train.drop('Survived', axis=1)  # train 은 답이 제거된 데이터 셋이다.
 
     @staticmethod
-    def create_label(this):
+    def create_label(this) -> object:
         return this.train['Survived']  # lable 은 곧 답이 된다.
 
     @staticmethod
-    def drop_feature(this):
-        pass
+    def drop_feature(this, feature) -> object:
+        # p149에 보면 훈련, 테스트 세트로 나뉜다.
+        this.train = this.train.drop([feature], axis=1)
+        this.test = this.test.drop([feature], axis=1)
+        return this
