@@ -22,8 +22,8 @@ class Controller:
         service = self.service
         this = self.preprocessing(train, test)
         print(f'훈련 컬럼 : {this.train.columns}')
-        # this.label = service.create_label(this)
-        # this.train = service.create_train(this)
+        this.label = service.create_label(this)
+        this.train = service.create_train(this)
         return this
 
     def learning(self):
