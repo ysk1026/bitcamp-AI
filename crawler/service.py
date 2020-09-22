@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+import urllib.request
 from urllib.request import urlopen
 import os, shutil
 import sys
@@ -6,6 +7,7 @@ sys.path.insert(0, '/Users/youngseonkim/Documents/SbaProjects')
 from crawler.entity import Entity
 from pandas import DataFrame
 import pandas as pd
+
 
 class Service:
     def __init__(self):
@@ -15,15 +17,12 @@ class Service:
     def bugs_music(self):
         pass
     
-    def naver_movie(self):
-        pass
-    
     @staticmethod
     def get_url(url):
         myparser = 'html.parser'
         response = urlopen(url)
         soup = BeautifulSoup(response, myparser)
-        print(type(soup))
+        return soup
     
     @staticmethod
     def save_webtoon_file(mysrc, myweekday, mytitle):
@@ -54,10 +53,10 @@ class Service:
 
     @staticmethod
     def save_webtoon_csv(url):
-        myparser = 'html.parser'
-        response = urlopen(url)
-        soup = BeautifulSoup(response, myparser)
-        mytarget = soup.find_all('div', attrs={'class':'thumb'})
+        # myparser = 'html.parser'
+        # response = urlopen(url)
+        # soup = BeautifulSoup(response, myparser)
+        mytarget = Service.get_url(url).find_all('div', attrs={'class':'thumb'})
         mylist = []
         for abcd in mytarget:
             myhref = abcd.find('a').attrs['href']
@@ -75,7 +74,7 @@ class Service:
             mysrc = imgtag.attrs['src']
             print('\nMy source : %s' %mysrc)
             
-            save_webtoon_file(mysrc, myweekday, mytitle)
+            Service.save_webtoon_file(mysrc, myweekday, mytitle)
             
             sublist = []
             sublist.append(mytitleid)
@@ -92,74 +91,62 @@ class Service:
         print(filename + ' 파일로 저장됨')
     
     @staticmethod
-    def save_movie_file(movie_src, movie_name):
-        myfolder = 'Users\\youngseonkim\\Documents\\movieset'
-        image_open = urlopen(movie_src)
-        filename = myfolder + movie_name + '.jpg'
-        myfile = open(filename, mode='wb')
-        myfile.write(image_open.read())
-        myfile.close()
+    def get_movie_url(url):
+        url = "http://movie.naver.com/movie/sdb/rank/rmovie.nhn"
+        html = urllib.request.urlopen(url)
+        soup = BeautifulSoup(html, 'html.parser')
+        return soup
+    
+    @staticmethod
+    def get_movie_tags(url, url_header):
+        tags = Service.get_movie_url(url).findall('div', attrs={'class' : 'tit3'})
+        for tag in tags:
+            print(tag.a.string)
         
-        try:
-            if not os.path.exists(myfolder):
-                os.mkdir(myfolder)
+        print('<a> 태그의 href 전체 태그')
+        for tag in tags:
+            print(url_header + tag.a['href'])
         
-        except FileExistsError as err:
-            print(err)
-            
     @staticmethod
     def save_movie_csv(url):
-        myurl = url
-        response = urlopen(myurl)
-        soup = BeautifulSoup(response, 'html.parser')
-        mytarget_title = soup.findAll('div', attrs={'class' : 'thumb'})
-        mytarget_star = soup.findAll('dd', attrs={'class':'star'})
-        mylist0 = []
-        mylist1 = []
-        
-        for title in mytarget_title:
-            movie_name = title.find('img').attrs['alt']
-            movie_name = movie_name.replace('?','').replace(':','')
-            movie_src_full = title.find('img').attrs('src')
-            movie_src = movie_src_full.replace('?type=m99_141_2', '')
-            sublist = []
-            
-            sublist.append(movie_name)
-            sublist.append(movie_src)
-            
-            mylist0.append(sublist)
-            
-            save_movie_file(movie_src, movie_name)
+        mytrs = Service.get_movie_url(url).find_all('tr')
+        no = 0
+        totallist = []
+        for one_tr in mytrs :
+            title = ''
+            up_down = '' # '상승/하강/불변'을 위한 설명 문구
 
-        for star in mytarget_star:
-            myhref0 = star.find('a')
-            movie_point_full = myhref0.find('span', attrs={'class' : 'num'})
-            movie_point = movie_point_full.contents
-            
-            movie_reserve_full = star.find('div', attrs={'class' : 'star_t1 b_star'})
-            
-            try:
-                movie_reserve = movie_reserve_full.find('span', attrs={'class':'num'}).contents
-                
-            except AttributeError as err:
-                movie_reserve = '미개봉'
-                
-            sublist = []
-            
-            sublist.append(movie_point)
-            sublist.append(movie_reserve)
-            
-            mylist1.append(sublist)
-    
-        mycolumns0 = ['제목', '스크린샷']
-        mycolumns1 = ['별점', '예매율']
-        myindex = range(0, len(mylist0))
-        myframe0 = DataFrame(mylist0, index=myindex, columns=mycolumns0)
-        myframe1 = DataFrame(mylist1, index=myindex, columns=mycolumns1)
-        
-        myframe = pd.concat([myframe0, myframe1], axis = 1)
-        filename = '0921_naver_movie_ranking.csv'
-        myframe.to_csv(filename, encoding ='utf-8')
-        print(filename + ' 파일로 저장됨')
-        
-                    
+        mytd = one_tr.find('td', attrs={'class':'title'})
+        if(mytd != None):
+            no += 1
+            newno = str(no).zfill(2)
+
+            mytag = mytd.find('div', attrs={'class':'tit3'})
+
+            # string 속성 : 해당 태그가 가지고 있는 문자열을 출력
+            title = mytag.a.string
+
+            # td 태그 중에서 3번째 요소를 찾기
+            mytd = one_tr.select_one('td:nth-of-type(3)')
+            myimg = mytd.find('img')
+            if myimg.attrs['alt'] == 'up' :
+                up_down = '상승'
+            elif myimg.attrs['alt'] == 'down' :
+                up_down = '강등'
+            else :
+                up_down = '불변'
+
+            change = one_tr.find('td', attrs={'class':'range ac'})
+            change = change.string
+
+            # print(newno + '/' + title + '/' + up_down + '/' + change)
+            totallist.append((newno, title, up_down, change))
+
+        mycolumn = ['순위', '제목', '변동', '변동값']
+        myframe = DataFrame(totallist, columns=mycolumn)
+
+        filename = 'naverMovie.csv'
+
+        myframe.to_csv(filename)
+
+        print(filename + ' 파일 저장됨')  

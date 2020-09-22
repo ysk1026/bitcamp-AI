@@ -12,8 +12,8 @@ class Controll:
 if __name__ == '__main__':
     ctrl = Controll()
     service = ctrl.service
-    comic_url = 'https://comic.naver.com/webtoon/weekday.nhn'
-    movie_url = 'https://movie.naver.com/movie/running/current.nhn'
+    # comic_url = 'https://comic.naver.com/webtoon/weekday.nhn'
+    # movie_url = "http://movie.naver.com/movie/sdb/rank/rmovie.nhn"
     service.save_webtoon_csv(comic_url)
     service.save_movie_csv(movie_url)
     
