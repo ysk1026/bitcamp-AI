@@ -1,9 +1,13 @@
 import nltk
-from textmining.entity import Entity
-from textmining.samsung_service import SamsungService
+import sys
+sys.path.insert(0, '/Users/youngseonkim/Documents/SbaProjects')
+from miner.entity import Entity
+from miner.service import SamsungService
 class Controller:
     def __init__(self):
-        pass
+        self.entity = Entity()
+        self.service = SamsungService()
+        
     def download_dictionary(self):
         nltk.download('all')
     def data_analysis(self):
@@ -36,3 +40,7 @@ if __name__ == '__main__':
             app.data_analysis()
         elif menu == '0':
             break
+    filename = '문재인대통령신년사.txt'
+    app.service.get_data(filename)
+    app.service.save_asfile()
+    

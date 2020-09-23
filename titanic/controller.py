@@ -75,12 +75,13 @@ class Controller:
     def learning(self, train, test):
         service = self.service
         this = self.modeling(train, test)
-        print('################## Learning 결과 #####################')
-        print(f'결정 트리 검증 결과 : {service.accuracy_by_dtree(this)}')
-        print(f'랜덤포레스트 트리 검증 결과 : {service.accuracy_by_rforest(this)}')
-        print(f'나이브베이즈 트리 검증 결과 : {service.accuracy_by_nb(this)}')
-        print(f'KNN 트리 검증 결과 : {service.accuracy_by_knn(this)}')
-        print(f'SVM 트리 검증 결과 : {service.accuracy_by_svm(this)}')
+        print('&&&&&&&&&&&&&&&&& Learning 결과  &&&&&&&&&&&&&&&&')
+        print(f'결정트리 검증결과: {service.accuracy_by_dtree(this)}')
+        print(f'랜덤포리 검증결과: {service.accuracy_by_rforest(this)}')
+        print(f'나이브베이즈 검증결과: {service.accuracy_by_nb(this)}')
+        print(f'KNN 검증결과: {service.accuracy_by_knn(this)}')
+        print(f'SVM 검증결과: {service.accuracy_by_svm(this)}')
+
 
     def submit(self): # machine이 된다.
         pass

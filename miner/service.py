@@ -5,6 +5,9 @@ import pandas as pd
 from nltk import FreqDist
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
+from bs4 import BeautifulSoup
+from gensim.models import word2vec
+
 class SamsungService:
     def __init__(self):
         self.texts = []
@@ -12,6 +15,8 @@ class SamsungService:
         self.okt = Okt()
         self.stopwords = []
         self.freqtxt = []
+        self.results = []
+        
     def extract_token(self, payload):
         print('>>> text 문서에서 token 추출')
         filename = payload.context + payload.fname
@@ -67,3 +72,35 @@ class SamsungService:
         plt.imshow(wcloud, interpolation='bilinear')
         plt.axis('off')
         plt.show()
+        
+    def get_data(self, filename):
+        myfile = open(filename, 'rt', encoding='utf-8')
+        soup = BeautifulSoup(myfile, 'html.parser')
+        mydata = soup.text
+        results = self.results
+        okt = Okt()
+        
+        datalines = mydata.split('\n')
+        for oneline in datalines :
+            mypos = okt.pos(oneline, norm = True, stem = True)
+            
+            imsi = []
+            for word in mypos:
+                if not word[1] in ['Josa', 'Eomi', 'Punctuation', 'Verb']:
+                    if len(word[0]) >= 2 :
+                        imsi.append(word[0])
+            temp = (' '.join(imsi)).strip()
+            results.append(temp)
+            
+    def save_asfile(self):
+        prepro_file = 'word2vec.prepro'
+        results = self.results
+        with open(prepro_file, 'wt', encoding='utf-8') as myfile:
+            myfile.write('\n'.join(results))
+            
+        data = word2vec.LineSentence(prepro_file)
+        model = word2vec.Word2Vec(data, size =200, window=10, min_count=2, sg=1)
+        
+        model_filename = 'word2vec.model'
+        
+        model.save(model_filename)
