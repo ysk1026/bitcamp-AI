@@ -2,7 +2,8 @@ import sys
 sys.path.insert(0, '/Users/youngseonkim/Documents/SbaProjects')
 from titanic.entity import Entity
 from titanic.service import Service
-
+from sklearn.ensemble import RandomForestClassifier
+import pandas as pd
 """
 --- PassengerId  고객ID,
 --- Survived 생존여부,  --> 머신러닝 모델이 맞춰야 할 답 
@@ -83,10 +84,16 @@ class Controller:
         print(f'SVM 검증결과: {service.accuracy_by_svm(this)}')
 
 
-    def submit(self): # machine이 된다.
-        pass
+    def submit(self, train, test): # machine이 된다.
+        this = self.modeling(train, test)
+        clf = RandomForestClassifier()
+        clf.fit(this.train, this.label)
+        prediction = clf.predict(this.test)
+        pd.DataFrame(
+            {'PassengerId' : this.id, 'Survived' : prediction}
+        ).to_csv(this.context + 'submission.csv', index=False)
 
 
 if __name__ == '__main__':
     ctrl = Controller()
-    ctrl.learning('train.csv', 'test.csv')
+    ctrl.submit('train.csv', 'test.csv')
