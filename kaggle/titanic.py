@@ -1,7 +1,6 @@
 import sys
 sys.path.insert(0, '/Users/youngseonkim/Documents/SbaProjects')
 from util.file_handler import FileReader
-from sklearn.ensemble import RandomForestClassifier
 import pandas as pd
 import numpy as np
 # sklearn algorithm : classification, regression, clustering, reduction
@@ -31,11 +30,12 @@ Embarked 승선한 항구명 C = 쉐브루, Q = 퀸즈타운, S = 사우스햄�
 
 class Service:
     def __init__(self):
-        self.entity = FileReader()
+        self.filereader = FileReader()
         pass
 
     def new_model(self, payload) -> object:
-        this = self.entity
+        this = self.filereader
+        this.context = '/Users/youngseonkim/Documents/SbaProjects/kaggle/data/'
         this.fname = payload
         return pd.read_csv(this.context + this.fname)  # p.139  df = tensor
 
@@ -197,7 +197,7 @@ class Service:
 class Controller:
     def __init__(self):
         print('TEST')
-        self.entity = FileReader()
+        self.filereader = FileReader()
         self.service = Service()
 
     def modeling(self, train, test):
@@ -211,7 +211,7 @@ class Controller:
 
     def preprocessing(self, train, test):
         service = self.service
-        this = self.entity
+        this = self.filereader
         this.train = service.new_model(train) # payload
         this.test = service.new_model(test) # payload
         this.id = this.test['PassengerId'] # machine 이에게는 이것이 question 이 됩니다. 
@@ -265,7 +265,8 @@ class Controller:
         prediction = clf.predict(this.test)
         pd.DataFrame(
             {'PassengerId' : this.id, 'Survived' : prediction}
-        ).to_csv(this.context + 'submission.csv', index=False)
+        ).to_csv('/Users/youngseonkim/Documents/SbaProjects/kaggle/data/' + 'submission.csv', index=False)
+        
 
 
 if __name__ == '__main__':
