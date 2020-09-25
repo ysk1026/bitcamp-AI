@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>배추가격 예측 시스템</h1>
+    <form action="/cabbage" method="POST">
+    <!-- avgTemp, minTemp, maxTemp, rainFall 변수 4개를 입력받아서 예측값 하나를 받아야 합니다 -->
+        평균 기온: <input type="text" name="avgTemp"> </br>
+        최저 온도: <input type="text" name="minTemp"> </br>
+        최고 온도: <input type="text" name="maxTemp"> </br>
+        강수량: <input type="text" name="rainFall"> </br>
+        <input type="submit" value ="전송">
+    </form>
+    </body>
+</html>
