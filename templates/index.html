@@ -15,5 +15,8 @@
         강수량: <input type="text" name="rainFall"> </br>
         <input type="submit" value ="전송">
     </form>
+    {% if result %}
+    <p>예상 가격 : {{result}}</p>
+    {% endif %}
     </body>
 </html>
