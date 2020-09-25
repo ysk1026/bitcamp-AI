@@ -59,8 +59,20 @@ def signup():
     student.name = name
     student.birth = birth
     service = StudentService()
-    service.add_student(student)
+    # service.add_student(student)
+    return render_template(f'login.html')
 
+
+@app.route('/signin', methods=['POST'])
+def signin():
+    print(' ######  SIGNIN #########')
+    id = request.form['id']
+    pwd = request.form['pwd']
+    service = StudentService()
+    name = service.login(id, pwd)
+    render_params = {}
+    render_params['name'] = name
+    return render_template(f'index.html', **render_params)
 
 
 if __name__ == "__main__":

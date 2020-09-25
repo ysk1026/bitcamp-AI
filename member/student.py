@@ -97,7 +97,8 @@ class StudentDao:
         select * from  students where id like ? and pwd like ?
         """
         cursor.execute(sql, (id, pwd))
-        return cursor.fetchone()
+        temp = cursor.fetchone()
+        return temp[2]
         
     def update(self, id, name):
         # 'id'가 'lee'인 친구의 이름을 '이문세'로 바꾸세요.
@@ -128,3 +129,6 @@ class StudentService:
         self.dao.create()
         self.dao.insert_many()
         print(f'>>> 입력된 학생들의 수: {self.dao.fetch_count()}')
+
+    def login(self, id, pwd):
+        return self.dao.login(id, pwd)
